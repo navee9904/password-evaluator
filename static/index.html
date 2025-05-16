@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Strength Evaluator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <script src="/static/app.js" defer></script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        .pulse {
+            animation: pulse 1.5s infinite;
+        }
+        .strength-bar {
+            height: 12px;
+            border-radius: 6px;
+            transition: width 0.4s ease-in-out, background-color 0.4s ease-in-out;
+        }
+        .feedback-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+        .feedback-item:hover {
+            transform: translateX(5px);
+        }
+        .cracking-time-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+        #togglePassword:hover {
+            transform: scale(1.1);
+            transition: transform 0.2s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 flex items-center justify-center min-h-screen p-4 sm:p-6">
+    <div class="bg-white bg-opacity-95 backdrop-blur-lg p-6 sm:p-8 rounded-2xl shadow-2xl w-full max-w-lg transform transition-all duration-300 hover:shadow-3xl">
+        <h1 class="text-3xl font-extrabold mb-6 text-center text-gray-900 flex items-center justify-center gap-2" role="heading" aria-level="1">
+            <i class="fas fa-shield-alt text-indigo-600"></i> Password Strength Evaluator
+        </h1>
+        <div class="space-y-6">
+            <div class="relative">
+                <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Enter Your Password</label>
+                <div class="relative">
+                    <input 
+                        type="text" 
+                        id="password" 
+                        name="password" 
+                        class="block w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900 placeholder-gray-400" 
+                        placeholder="Type your password..." 
+                        required 
+                        aria-describedby="password-help"
+                    >
+                    <button 
+                        type="button" 
+                        id="togglePassword" 
+                        class="absolute inset-y-0 right-0 pr-4 flex items-center" 
+                        aria-label="Hide password"
+                    >
+                        <i class="fas fa-eye-slash text-gray-500 hover:text-indigo-600 transition-colors"></i>
+                    </button>
+                </div>
+                <p id="password-help" class="mt-1 text-xs text-gray-500">Enter a password to evaluate its strength in real-time.</p>
+            </div>
+
+            <!-- Real-time Feedback Section -->
+            <div id="realtimeFeedback" class="space-y-2 hidden" role="region" aria-live="polite">
+                <h2 class="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                    <i class="fas fa-info-circle text-indigo-600"></i> Real-Time Feedback
+                </h2>
+                <div class="bg-gray-50 p-4 rounded-lg space-y-2">
+                    <p id="rtLength" class="feedback-item text-sm text-gray-700"></p>
+                    <p id="rtUppercase" class="feedback-item text-sm text-gray-700"></p>
+                    <p id="rtLowercase" class="feedback-item text-sm text-gray-700"></p>
+                    <p id="rtNumber" class="feedback-item text-sm text-gray-700"></p>
+                    <p id="rtSpecial" class="feedback-item text-sm text-gray-700"></p>
+                    <p id="rtPattern" class="feedback-item text-sm text-gray-700"></p>
+                    <div id="rtCrackingTime" class="feedback-item text-sm text-gray-700 font-medium">
+                        Cracking Time: <span id="crackingTimeText"></span>
+                        <span id="crackingTimeBadge" class="cracking-time-badge"></span>
+                    </div>
+                    <div class="mt-2">
+                        <p id="rtStrength" class="text-sm font-semibold"></p>
+                        <div id="rtStrengthBar" class="strength-bar bg-gray-200 mt-1"></div>
+                    </div>
+                    <p id="suggestedPassword" class="text-sm text-indigo-600 mt-2 hidden font-medium"></p>
+                </div>
+            </div>
+
+            <!-- Buttons Section -->
+            <div class="flex flex-col sm:flex-row gap-3 mt-4">
+                <button 
+                    id="checkAnother" 
+                    class="bg-gray-600 text-white py-2 px-4 rounded-lg hover:bg-gray-700 transition duration-200 flex items-center justify-center gap-2"
+                    aria-label="Check another password"
+                >
+                    <i class="fas fa-redo-alt"></i> Try Another
+                </button>
+                <button 
+                    id="suggestPassword" 
+                    class="bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 transition duration-200 flex items-center justify-center gap-2 pulse"
+                    aria-label="Generate a strong password"
+                >
+                    <i class="fas fa-key"></i> Suggest Password
+                </button>
+            </div>
+            <div id="errors" class="text-red-600 text-sm mt-2" role="alert"></div>
+        </div>
+    </div>
+</body>
+</html>
